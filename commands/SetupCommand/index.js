@@ -330,7 +330,6 @@ SetupCommand.prototype.findDevice = function() {
 	});
 
 	function inspect(device) {
-
 		// TODO: Update deviceSpecs to include DFU & non-DFU PIDs, use here
 		if(device.type === 'Spark Core') {
 
@@ -364,6 +363,35 @@ SetupCommand.prototype.findDevice = function() {
 						console.log(
 							chalk.cyan('!'),
 							"The Photon supports secure Wi-Fi setup. We'll try that first."
+						);
+						return wireless.list(macAddress);
+					});
+					return;
+				}
+				console.log(arrow, 'Goodbye!');
+			});
+		} else if(device.type === 'Dash') {
+			// Dash detected
+			detectedPrompt('Dash', function setupDashChoice(ans) {
+
+				if(ans.setup) {
+
+					var macAddress;
+					self.newSpin('Getting device information...').start();
+					serial.getDeviceMacAddress(device).then(function(mac) {
+
+						macAddress = mac;
+
+					}, function() {
+
+						// do nothing on rejection
+
+					}).finally(function () {
+
+						self.stopSpin();
+						console.log(
+							chalk.cyan('!'),
+							"The Dash supports secure Wi-Fi setup. We'll try that first."
 						);
 						return wireless.list(macAddress);
 					});
